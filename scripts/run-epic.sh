@@ -11,7 +11,7 @@ repo_url="$(git -C "$project_dir" remote get-url origin)"
 branch="$(git -C "$project_dir" branch --show-current)"
 
 # Ensure beads JSONL is committed before the container clones
-bd export
+bd export 2>/dev/null || true
 if ! git -C "$project_dir" diff --quiet .beads/issues.jsonl 2>/dev/null; then
   git -C "$project_dir" add .beads/issues.jsonl
   git -C "$project_dir" commit -m "bd sync: pre-run flush for $epic"
@@ -49,5 +49,5 @@ docker rm "$container_name"
 # Pull the feature branch and import bead updates
 echo "Fetching results from remote..."
 git -C "$project_dir" fetch origin
-bd import
+bd import 2>/dev/null || true
 echo "Done. Check remote branches for the feature branch."
