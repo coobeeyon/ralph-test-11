@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Pre-commit hook: beads sync
+# Install via: git config core.hooksPath scripts/git-hooks
+
+set -euo pipefail
+
+if command -v bd >/dev/null 2>&1 && bd hook --help >/dev/null 2>&1; then
+  bd hook pre-commit "$@"
+fi
