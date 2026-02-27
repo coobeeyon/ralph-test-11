@@ -11,10 +11,8 @@ git clone --branch "$branch" "$repo_url" "$work_dir"
 cd "$work_dir"
 git config --global --add safe.directory "$work_dir"
 
-# --- Start Dolt server and initialize beads ---
+# --- Initialize beads (embedded mode, no server needed) ---
 echo "Initializing beads..."
-dolt sql-server --port 3307 &
-sleep 1
 bd init --from-jsonl
 
 # --- Install pre-commit hook (beads) ---
@@ -32,7 +30,7 @@ fi
 
 # --- Run agent ---
 echo "Starting agent run..."
-claude -p --dangerously-skip-permissions --verbose --output-format json --model opus "$(cat <<'PROMPT'
+claude -p --dangerously-skip-permissions --output-format json --model opus "$(cat <<'PROMPT'
 Read SPEC.md to understand the project requirements.
 Run `bd list` to check for existing tasks.
 
@@ -42,6 +40,6 @@ If no tasks exist: read SPEC.md carefully, create an epic with child tasks, then
 Research anything you need. Follow AGENTS.md for the Landing the Plane protocol.
 Push all changes before finishing.
 PROMPT
-)"
+)" > /tmp/agent-run.json
 
 echo "Agent run complete."

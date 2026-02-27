@@ -57,13 +57,16 @@ docker run --name "$container_name" \
   -e SSH_AUTH_SOCK=/ssh-agent \
   -v "$runner_dir/run.sh:/run.sh:ro" \
   -v "agent-claude-home:/home/runner/.claude" \
-  agent-runner /run.sh 2>&1 | tee "$log_file"
-
-# Update latest symlink
-ln -sf "$(basename "$log_file")" "$log_dir/latest.jsonl"
+  agent-runner /run.sh
 
 echo ""
-echo "Container $container_name finished. Cleaning up..."
+echo "Container $container_name finished."
+
+# Extract agent JSON log from container before removing it
+docker cp "$container_name:/tmp/agent-run.json" "$log_file" 2>/dev/null || echo "Warning: no agent log found in container"
+ln -sf "$(basename "$log_file")" "$log_dir/latest.jsonl"
+
+echo "Cleaning up..."
 docker rm "$container_name"
 
 # --- Pull any code changes the agent pushed ---

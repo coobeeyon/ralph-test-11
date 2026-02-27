@@ -11,11 +11,11 @@ project_dir="$(cd "$script_dir/.." && pwd)"
 
 schema='{"type":"object","properties":{"continue":{"type":"boolean","description":"true if more work remains, false if spec is fully implemented"},"reason":{"type":"string","description":"Brief explanation of the decision"}},"required":["continue","reason"]}'
 
-output=$(claude -p \
+output=$(cat <<EOF | claude -p \
   --model sonnet \
-  --allowedTools 'Read' 'Bash(bd list*)' 'Bash(bd show*)' \
-  --output-format json --json-schema "$schema" \
-  "You are deciding whether an AI agent loop should continue or stop.
+  --allowedTools 'Read,Bash(bd list*),Bash(bd show*)' \
+  --output-format json --json-schema "$schema"
+You are deciding whether an AI agent loop should continue or stop.
 
 Read these inputs:
 1. $project_dir/SPEC.md — the project specification
@@ -24,7 +24,9 @@ Read these inputs:
 
 Decide:
 - continue=true if there are open tasks, unfinished spec requirements, or the agent appears stuck and should retry
-- continue=false if the spec is fully implemented and all tasks are closed")
+- continue=false if the spec is fully implemented and all tasks are closed
+EOF
+)
 
 structured=$(echo "$output" | jq '.structured_output')
 reason=$(echo "$structured" | jq -r '.reason')
