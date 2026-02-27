@@ -15,6 +15,7 @@ log_name="$(basename "$log_file" .jsonl)"
 summary_file="$summary_dir/${log_name}.md"
 
 claude -p \
+  --model haiku \
   --allowedTools 'Read' "Write($summary_dir/*)" \
   "Read the log file at $log_file. Write a concise markdown summary to $summary_file covering:
 - What tasks were worked on

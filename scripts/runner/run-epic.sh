@@ -64,6 +64,7 @@ while [ "$(remaining)" -gt 0 ]; do
   set +e
   timeout "${timeout_mins}m" claude \
     "Run 'bd show --children $epic' to see tasks. Pick ONE open child task (marked ○) and complete it. Do NOT work on tasks outside this epic. Commit your changes and close the bead when done. Do NOT push — the runner handles pushing." \
+    --model opus \
     --dangerously-skip-permissions \
     -p --verbose 2>&1 | tee "$logfile"
   exit_code=${PIPESTATUS[0]}

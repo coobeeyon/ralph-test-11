@@ -11,6 +11,7 @@ project_dir="$(cd "$script_dir/.." && pwd)"
 schema='{"type":"object","properties":{"continue":{"type":"boolean","description":"true if more work remains, false if spec is fully implemented"},"reason":{"type":"string","description":"Brief explanation of the decision"}},"required":["continue","reason"]}'
 
 output=$(claude -p \
+  --model sonnet \
   --allowedTools 'Read' 'Bash(bd list*)' 'Bash(bd show*)' \
   --output-format json --json-schema "$schema" \
   "You are deciding whether an AI agent loop should continue or stop.
