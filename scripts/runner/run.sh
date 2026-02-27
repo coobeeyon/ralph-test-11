@@ -11,8 +11,10 @@ git clone --branch "$branch" "$repo_url" "$work_dir"
 cd "$work_dir"
 git config --global --add safe.directory "$work_dir"
 
-# --- Initialize beads from committed JSONL ---
+# --- Start Dolt server and initialize beads ---
 echo "Initializing beads..."
+dolt sql-server --port 3307 &
+sleep 1
 bd init --from-jsonl
 
 # --- Install pre-commit hook (beads) ---

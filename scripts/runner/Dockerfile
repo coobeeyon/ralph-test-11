@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN mkdir -p /root/.ssh && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-# Layer 3: Build beads (bd) from source with CGO for Dolt backend
+# Layer 3a: Install Dolt (beads backend)
+RUN curl -fsSL https://github.com/dolthub/dolt/releases/latest/download/install.sh | bash
+
+# Layer 3b: Build beads (bd) from source with CGO for Dolt backend
 ARG GO_VERSION=1.25.6
 RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ libc6-dev libicu-dev && \
     curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -xz && \
