@@ -70,5 +70,4 @@ docker rm "$container_name"
 echo "Pulling code changes from remote..."
 git -C "$project_dir" pull --ff-only || echo "No new commits to pull."
 
-# --- Print run summary ---
-"$script_dir/summary.sh" "$log_file"
+echo "Done. Log saved: $log_file"
