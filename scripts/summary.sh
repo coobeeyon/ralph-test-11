@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Summarize the latest run log using Claude.
 # Usage: summary.sh [log-file]
-#   If no log-file given, reads logs/latest.jsonl symlink.
+#   If no log-file given, reads logs/latest.log symlink.
 set -euo pipefail
 unset CLAUDECODE
 
@@ -11,12 +11,12 @@ log_dir="$project_dir/logs"
 summary_dir="$log_dir/summaries"
 mkdir -p "$summary_dir"
 
-log_file="${1:-$log_dir/latest.jsonl}"
+log_file="${1:-$log_dir/latest.log}"
 # Resolve symlink so the summary gets the real timestamped name
 if [ -L "$log_file" ]; then
   log_file="$(cd "$(dirname "$log_file")" && realpath "$(readlink "$log_file")")"
 fi
-log_name="$(basename "$log_file" .jsonl)"
+log_name="$(basename "$log_file" .log)"
 summary_file="$summary_dir/${log_name}.md"
 
 cat <<EOF | claude -p \

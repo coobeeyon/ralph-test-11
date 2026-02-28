@@ -26,8 +26,12 @@ if [ ! -f "$claude_config" ] && [ -d "$HOME/.claude/backups" ]; then
 fi
 
 # --- Run agent ---
-echo "Starting agent run..."
-claude -p --dangerously-skip-permissions --output-format json --model opus "$(cat <<'PROMPT'
+logdir="$work_dir/logs/runs"
+mkdir -p "$logdir"
+logfile="$logdir/run-$(date +%Y%m%d-%H%M%S).log"
+
+echo "Starting agent run... (log: $logfile)"
+claude -p --dangerously-skip-permissions --verbose --model opus "$(cat <<'PROMPT'
 You are ONE agent in a relay. Do ONE task, then stop.
 
 ## Steps
@@ -53,7 +57,7 @@ You are ONE agent in a relay. Do ONE task, then stop.
 - The next agent will continue where you left off.
 - The task graph is a living document. Create, restructure, and close tasks as understanding grows.
 PROMPT
-)" > /tmp/agent-run.json
+)" 2>&1 | tee "$logfile"
 
 echo "Agent run complete."
 
