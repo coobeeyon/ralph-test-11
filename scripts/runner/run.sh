@@ -11,13 +11,9 @@ git clone --branch "$branch" "$repo_url" "$work_dir"
 cd "$work_dir"
 git config --global --add safe.directory "$work_dir"
 
-# --- Initialize beads (embedded mode, no server needed) ---
-echo "Initializing beads..."
-rm -f .beads/metadata.json
-bd init --from-jsonl
-
-# --- Install pre-commit hook (beads) ---
-git config core.hooksPath scripts/git-hooks
+# --- Initialize litebrite (detects remote branch automatically) ---
+echo "Initializing litebrite..."
+lb init
 
 # --- Restore .claude.json from persisted backup if missing ---
 claude_config="$HOME/.claude.json"
@@ -33,9 +29,9 @@ fi
 echo "Starting agent run..."
 claude -p --dangerously-skip-permissions --output-format json --model opus "$(cat <<'PROMPT'
 Read SPEC.md to understand the project requirements.
-Run `bd list` to check for existing tasks.
+Run `lb list` to check for existing tasks.
 
-If tasks exist: pick one open task, implement it, commit your changes, and close the bead.
+If tasks exist: pick one open task, implement it, commit your changes, and close it.
 If no tasks exist: read SPEC.md carefully, create an epic with child tasks, then start implementing.
 
 Research anything you need. Follow AGENTS.md for the Landing the Plane protocol.

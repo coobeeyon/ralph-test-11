@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Decide whether the agent loop should continue.
-# Reads SPEC.md, beads state, and recent summaries.
+# Reads SPEC.md, litebrite state, and recent summaries.
 #
 # Exit code 0 = continue, 1 = done
 set -euo pipefail
@@ -13,13 +13,13 @@ schema='{"type":"object","properties":{"continue":{"type":"boolean","description
 
 output=$(cat <<EOF | claude -p \
   --model sonnet \
-  --allowedTools 'Read,Bash(bd list*),Bash(bd show*)' \
+  --allowedTools 'Read,Bash(lb list*),Bash(lb show*)' \
   --output-format json --json-schema "$schema"
 You are deciding whether an AI agent loop should continue or stop.
 
 Read these inputs:
 1. $project_dir/SPEC.md — the project specification
-2. Run 'bd list --pretty' to see current task state
+2. Run 'lb list' to see current task state
 3. Read the latest summary from $project_dir/logs/summaries/ (if any exist)
 
 Decide:

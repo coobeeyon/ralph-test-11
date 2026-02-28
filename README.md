@@ -1,6 +1,6 @@
 # AI Agent Harness
 
-A GitHub template for autonomous AI coding agents. Docker-isolated runs, beads-based task tracking, and iterative implementation from a spec.
+A GitHub template for autonomous AI coding agents. Docker-isolated runs, litebrite-based task tracking, and iterative implementation from a spec.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ A GitHub template for autonomous AI coding agents. Docker-isolated runs, beads-b
    scripts/run.sh
    ```
 
-The agent reads your spec, creates tasks via beads, implements them, and pushes code.
+The agent reads your spec, creates tasks via litebrite, implements them, and pushes code.
 
 ## Modes
 
@@ -50,7 +50,7 @@ scripts/run-epic.sh <epic-id> 30           # 30-min timeout per task
 
 - Docker
 - Git with SSH access to your repo
-- `bd` (beads) CLI — [github.com/steveyegge/beads](https://github.com/steveyegge/beads)
+- `lb` (litebrite) CLI
 - An Anthropic API key or Claude Code OAuth token
 
 ## Customization
@@ -61,17 +61,17 @@ The agent can modify `scripts/runner/Dockerfile` to add whatever your project ne
 
 ### Task tracking
 
-All work is tracked via beads (`bd`). The agent creates epics and tasks, marks them in-progress, and closes them on completion. Run `bd list` to see current state.
+All work is tracked via litebrite (`lb`). The agent creates epics and tasks, marks them in-progress, and closes them on completion. Run `lb list` to see current state.
 
 ### Git hooks
 
-The pre-commit hook at `scripts/git-hooks/pre-commit` runs beads sync. Add project-specific checks (linting, tests) as needed.
+Add project-specific checks (linting, tests) as needed.
 
 ## How It Works
 
 1. **Host script** builds a Docker container, mounts SSH agent + persistent Claude volume
-2. **Container** clones the repo fresh, initializes beads, runs Claude Code with a prompt
-3. **Claude** reads `SPEC.md`, checks beads for tasks, implements work, commits, pushes
+2. **Container** clones the repo fresh, initializes litebrite, runs Claude Code with a prompt
+3. **Claude** reads `SPEC.md`, checks litebrite for tasks, implements work, commits, pushes
 4. **Host script** pulls the changes after the container finishes
 
 ## Files
@@ -87,5 +87,4 @@ The pre-commit hook at `scripts/git-hooks/pre-commit` runs beads sync. Add proje
 | `scripts/runner/Dockerfile` | Container image |
 | `scripts/runner/run.sh` | Container entrypoint (single run) |
 | `scripts/runner/run-epic.sh` | Container entrypoint (epic mode) |
-| `.beads/` | Beads configuration and data |
 | `.claude/settings.local.json` | Claude Code permissions |

@@ -9,18 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN mkdir -p /root/.ssh && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-# Layer 3a: Install Dolt (beads backend)
-RUN curl -fsSL https://github.com/dolthub/dolt/releases/latest/download/install.sh | bash
-
-# Layer 3b: Build beads (bd) from source with CGO for Dolt backend
-ARG GO_VERSION=1.25.6
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ libc6-dev libicu-dev && \
-    curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -xz && \
-    PATH="/usr/local/go/bin:$PATH" CGO_ENABLED=1 go install github.com/steveyegge/beads/cmd/bd@latest && \
-    cp /root/go/bin/bd /usr/local/bin/bd && \
-    apt-get purge -y gcc g++ libc6-dev libicu-dev && apt-get autoremove -y --purge && \
-    apt-get install -y --no-install-recommends libicu72 && \
-    rm -rf /var/lib/apt/lists/* /usr/local/go /root/go /root/.cache/go-build
+# Layer 3: Install litebrite (lb) from source
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    . /root/.cargo/env && \
+    cargo install --git https://github.com/coobeeyon/litebrite.git && \
+    cp /root/.cargo/bin/lb /usr/local/bin/lb && \
+    rustup self uninstall -y && \
+    rm -rf /root/.cargo /root/.rustup
 
 # Layer 4: Claude Code (changes occasionally)
 RUN npm install -g @anthropic-ai/claude-code

@@ -21,13 +21,9 @@ fi
 repo_url="$(git -C "$project_dir" remote get-url origin)"
 branch="$(git -C "$project_dir" branch --show-current)"
 
-# --- Pre-run beads flush (skip on fresh clones with no database) ---
-if command -v bd >/dev/null 2>&1 && bd export 2>/dev/null; then
-  if ! git -C "$project_dir" diff --quiet .beads/issues.jsonl 2>/dev/null; then
-    git -C "$project_dir" add .beads/issues.jsonl
-    git -C "$project_dir" commit -m "bd sync: pre-run flush"
-    git -C "$project_dir" push origin "$branch"
-  fi
+# --- Pre-run litebrite sync ---
+if command -v lb >/dev/null 2>&1; then
+  lb sync 2>/dev/null || true
 fi
 
 # --- Build container image ---

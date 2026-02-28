@@ -15,40 +15,34 @@ git config --global --add safe.directory /workspace
 logdir="/workspace/logs/epic-runs"
 mkdir -p "$logdir"
 
-# --- Start Dolt server and initialize beads ---
-echo "Initializing beads..."
-dolt sql-server --port 3307 &
-sleep 1
-bd init --from-jsonl
+# --- Initialize litebrite ---
+echo "Initializing litebrite..."
+lb init
 
 # Verify the epic exists before starting
-if ! bd show "$epic" > /dev/null 2>&1; then
-  echo "ERROR: Epic $epic not found in beads database"
-  echo "Available issues:"
-  bd list --pretty
+if ! lb show "$epic" > /dev/null 2>&1; then
+  echo "ERROR: Epic $epic not found in litebrite"
+  echo "Available items:"
+  lb list
   exit 1
 fi
 
-# --- Create feature branch from bead title ---
-bead_id="$(bd show "$epic" --json 2>/dev/null | grep '"id"' | head -1 | sed 's/.*"id": *"//; s/".*//')"
-bead_title="$(bd show "$epic" --json 2>/dev/null | grep '"title"' | head -1 | sed 's/.*"title": *"//; s/".*//')"
-slug="$(echo "$bead_title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/--*/-/g; s/^-//; s/-$//' | cut -c1-50)"
-feature_branch="${bead_id}-${slug}"
+# --- Create feature branch from item title ---
+item_info="$(lb show "$epic" 2>/dev/null)"
+item_title="$(echo "$item_info" | head -1 | sed 's/^[^ ]* //')"
+slug="$(echo "$item_title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/--*/-/g; s/^-//; s/-$//' | cut -c1-50)"
+feature_branch="${epic}-${slug}"
 
 echo "Creating feature branch: $feature_branch"
 git checkout -b "$feature_branch"
 
 # --- Task loop ---
 remaining() {
-  bd show --children "$epic" | grep -c '○' || true
+  lb list --parent "$epic" -s open 2>/dev/null | wc -l || echo 0
 }
 
 sync_and_push() {
-  bd export
-  git add .beads/issues.jsonl 2>/dev/null || true
-  if ! git diff --cached --quiet 2>/dev/null; then
-    git commit -m "bd sync: $epic task $task_num"
-  fi
+  lb sync
   git push -u origin "$feature_branch"
 }
 
@@ -63,7 +57,7 @@ while [ "$(remaining)" -gt 0 ]; do
 
   set +e
   timeout "${timeout_mins}m" claude \
-    "Run 'bd show --children $epic' to see tasks. Pick ONE open child task (marked ○) and complete it. Do NOT work on tasks outside this epic. Commit your changes and close the bead when done. Do NOT push — the runner handles pushing." \
+    "Run 'lb list --parent $epic' to see tasks. Pick ONE open child task and complete it. Do NOT work on tasks outside this epic. Commit your changes and close the item when done. Do NOT push — the runner handles pushing." \
     --model opus \
     --dangerously-skip-permissions \
     -p --verbose 2>&1 | tee "$logfile"
@@ -88,7 +82,7 @@ while [ "$(remaining)" -gt 0 ]; do
   fi
 
   echo ""
-  bd list --pretty
+  lb list
   echo ""
 done
 

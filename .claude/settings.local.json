@@ -1,9 +1,37 @@
 {
+  "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "command": "lb prime",
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "lb prime",
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
   "permissions": {
     "allow": [
-      "Bash(bd *)",
       "Bash(git *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(CLAUDECODE= claude:*)",
+      "Bash(claude:*)",
+      "Bash(env:*)",
+      "Bash(cat:*)",
+      "Bash(lb:*)"
     ]
   }
 }
