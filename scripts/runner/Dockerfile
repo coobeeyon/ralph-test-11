@@ -1,8 +1,8 @@
-FROM node:22-slim
+FROM node:22
 
 # Layer 1: System deps (changes ~never)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git make curl unzip ca-certificates openssh-client sudo \
+    unzip openssh-client sudo \
   && rm -rf /var/lib/apt/lists/*
 
 # Layer 2: GitHub SSH known host (changes ~never)
