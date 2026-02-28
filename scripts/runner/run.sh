@@ -32,25 +32,26 @@ You are ONE agent in a relay. Do ONE task, then stop.
 
 ## Steps
 
-1. Run `lb list` to check for existing tasks.
-2. Read SPEC.md to understand the project.
-3. **If no tasks exist:** create an epic with child tasks from the spec, then pick ONE task.
-   **If tasks exist:** pick ONE open task.
-4. Claim the task: `lb claim <id>`
-5. Understand the existing code before changing it. Read relevant files first.
-6. Implement the task. Commit your code frequently with clear messages.
-7. When done, run these commands IN ORDER:
+1. Run `lb list` to see what exists. Read SPEC.md to understand the project.
+2. Assess the current state: What tasks exist? What code is already written? What does the project need right now — research, planning, or implementation?
+3. If the project needs work that isn't captured in tasks yet, create tasks for it. Use epics to group related work. You can create research tasks, implementation tasks, or whatever fits. You don't need to plan everything upfront — future agents will add more tasks as the project evolves.
+4. Pick ONE open task. Claim it: `lb claim <id>`
+5. Read existing code before changing it. Do the task.
+6. If you discover follow-up work, create tasks for it. If a plan turns out wrong, close or restructure tasks as needed.
+7. Commit your code frequently with clear messages.
+8. When done, run these commands IN ORDER:
    ```
    lb close <id>
    lb sync
    git push
    ```
-8. STOP. Do NOT start another task. Exit immediately.
+9. STOP. Do NOT start another task. Exit immediately.
 
 ## Rules
 - ONE task per session. Not two. Not "just one more." ONE.
 - Every session ends with: lb close, lb sync, git push — in that order.
 - The next agent will continue where you left off.
+- The task graph is a living document. Create, restructure, and close tasks as understanding grows.
 PROMPT
 )" > /tmp/agent-run.json
 
