@@ -12,6 +12,7 @@ A Rust program that evolves AI combatants for an 8-ship free-for-all spaceship d
 - Thrust-based movement: ships have rotation, forward thrust, and inertia (no instant direction changes)
 - Each ship can fire unlimited projectiles; bullets travel a maximum of 200px before disappearing
 - A ship is destroyed when hit by any opponent's projectile
+- Each match starts from random initial conditions (positions, orientations)
 - A match ends when one ship remains (last one standing wins) or a time limit is reached
 
 ### Evolutionary System
