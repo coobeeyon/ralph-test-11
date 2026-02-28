@@ -35,7 +35,7 @@ You are ONE agent in a relay. Do ONE task, then stop.
 1. Run `lb list` to check for existing tasks.
 2. Read SPEC.md to understand the project.
 3. **If no tasks exist:** create an epic with child tasks from the spec, then pick ONE task.
-   **If tasks exist:** pick ONE open task. Do NOT create new tasks.
+   **If tasks exist:** pick ONE open task.
 4. Claim the task: `lb claim <id>`
 5. Understand the existing code before changing it. Read relevant files first.
 6. Implement the task. Commit your code frequently with clear messages.
